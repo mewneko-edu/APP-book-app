@@ -1,27 +1,34 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { forwardRef } from 'react';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
-export default function BookCard({ title, author, image, rating }) {
+// ✅ 必須用 forwardRef + Pressable，Link asChild 才能正確傳遞 onPress
+const BookCard = forwardRef(function BookCard(
+  { title, author, image, rating, onPress, ...rest },
+  ref
+) {
   const source = typeof image === 'string' ? { uri: image } : image;
 
   return (
-    <View style={styles.card}>
+    <Pressable ref={ref} onPress={onPress} {...rest} style={styles.card}>
       <Image source={source} style={styles.image} />
       <View style={styles.stars}>{renderStars(rating)}</View>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.author}>{author}</Text>
-    </View>
+      <Text style={styles.title} numberOfLines={1}>{title}</Text>
+      <Text style={styles.author} numberOfLines={1}>{author}</Text>
+    </Pressable>
   );
-}
+});
+
+export default BookCard;
 
 const styles = StyleSheet.create({
   card: {
-  width: 120,
-  marginRight: 16,
-  shadowColor: "#000",
-  shadowOpacity: 0.1,
-  shadowRadius: 5,
-  elevation: 3,
-},
+    width: 120,
+    marginRight: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+  },
   image: {
     width: '100%',
     height: 180,
@@ -35,7 +42,7 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: 'bold',
     marginTop: 5,
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'Roboto',
   },
   author: {

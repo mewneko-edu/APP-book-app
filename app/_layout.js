@@ -1,9 +1,15 @@
 import { Tabs } from 'expo-router';
 import { Image } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default function Layout() {
   return (
-    <Tabs>
+    <SafeAreaProvider>
+    <Tabs
+    screenOptions={{
+        headerShown: false, // ✅ 加這行，隱藏所有頁面的 header
+        tabBarActiveTintColor: '#6C3CE1',
+      }}>
       <Tabs.Screen
         name="index"
         options={{
@@ -65,5 +71,6 @@ export default function Layout() {
         }}
       />
     </Tabs>
+    </SafeAreaProvider>
   );
 }
