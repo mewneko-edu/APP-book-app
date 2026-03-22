@@ -2,7 +2,7 @@ import { forwardRef } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 const BookCard = forwardRef(function BookCard(
-  { title, author, image, rating, onPress, showStars = true, ...rest }, // ✅ 新增 showStars prop，預設顯示
+  { title, author, image, rating, onPress, showStars = true, ...rest },
   ref
 ) {
   const source = typeof image === 'string' ? { uri: image } : image;
@@ -10,7 +10,6 @@ const BookCard = forwardRef(function BookCard(
   return (
     <Pressable ref={ref} onPress={onPress} {...rest} style={styles.card}>
       <Image source={source} style={styles.image} />
-      {/* ✅ 只有 showStars 為 true 才顯示星星 */}
       {showStars && (
         <View style={styles.stars}>{renderStars(rating)}</View>
       )}

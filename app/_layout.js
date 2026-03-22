@@ -7,7 +7,7 @@ export default function Layout() {
     <SafeAreaProvider>
     <Tabs
     screenOptions={{
-        headerShown: false, // ✅ 加這行，隱藏所有頁面的 header
+        headerShown: false,
         tabBarActiveTintColor: '#6C3CE1',
       }}>
       <Tabs.Screen

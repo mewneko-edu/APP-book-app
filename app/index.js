@@ -6,12 +6,12 @@ import BookCard from './bookCard';
 
 export default function Home() {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const slideAnim = useRef(new Animated.Value(-300)).current; // ✅ 初始位置在畫面左側外
+  const slideAnim = useRef(new Animated.Value(-300)).current;
 
   const openDrawer = () => {
     setDrawerOpen(true);
     Animated.timing(slideAnim, {
-      toValue: 0,          // 滑入到原位
+      toValue: 0,
       duration: 250,
       useNativeDriver: true,
     }).start();
@@ -19,15 +19,14 @@ export default function Home() {
 
   const closeDrawer = () => {
     Animated.timing(slideAnim, {
-      toValue: -300,       // 滑回左側
+      toValue: -300,
       duration: 200,
       useNativeDriver: true,
-    }).start(() => setDrawerOpen(false)); // 動畫結束後才關閉 Modal
+    }).start(() => setDrawerOpen(false));
   };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-      {/* ✅ Drawer Modal：animationType="none" 讓我們自己控制動畫 */}
       <Modal
         visible={drawerOpen}
         transparent
@@ -35,7 +34,6 @@ export default function Home() {
         onRequestClose={closeDrawer}
       >
         <Pressable style={styles.drawerOverlay} onPress={closeDrawer}>
-          {/* ✅ Animated.View 控制左右滑入 */}
           <Animated.View
             style={[styles.drawer, { transform: [{ translateX: slideAnim }] }]}
           >
@@ -76,7 +74,6 @@ export default function Home() {
           </TouchableOpacity>
         </View>
 
-        {/* Popular Books：showStars={false} 不顯示星星 */}
         <Text style={styles.sectionTitle}>Popular Books</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {popularBooks.map((book) => (
@@ -86,7 +83,6 @@ export default function Home() {
           ))}
         </ScrollView>
 
-        {/* Newest：預設 showStars={true} 顯示星星 */}
         <Text style={styles.sectionTitle}>Newest</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 20 }}>
           {newestBooks.map((book) => (

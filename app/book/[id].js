@@ -1,7 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-// ✅ 只需要 SafeAreaView，不需要 useSafeAreaInsets
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { allBooks } from '../index';
 
@@ -24,7 +23,6 @@ export default function BookDetail() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* ✅ Header 不再手動加 paddingTop，SafeAreaView 已處理 */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.headerBtn}>
           <Text style={styles.backArrow}>‹</Text>
