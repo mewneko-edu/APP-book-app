@@ -52,6 +52,18 @@ export default function Layout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="bookCard"
+        options={{
+          href: null, // 不顯示在 tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="book/[id]"
+        options={{
+          href: null, // 不顯示在 tab bar
+        }}
+      />
     </Tabs>
   );
 }

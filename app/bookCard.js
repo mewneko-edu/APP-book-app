@@ -1,4 +1,4 @@
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 
 export default function BookCard({ title, author, image, rating }) {
   const source = typeof image === 'string' ? { uri: image } : image;
