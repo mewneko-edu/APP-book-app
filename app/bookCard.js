@@ -1,9 +1,8 @@
 import { forwardRef } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
-// ✅ 必須用 forwardRef + Pressable，Link asChild 才能正確傳遞 onPress
 const BookCard = forwardRef(function BookCard(
-  { title, author, image, rating, onPress, ...rest },
+  { title, author, image, rating, onPress, showStars = true, ...rest }, // ✅ 新增 showStars prop，預設顯示
   ref
 ) {
   const source = typeof image === 'string' ? { uri: image } : image;
@@ -11,7 +10,10 @@ const BookCard = forwardRef(function BookCard(
   return (
     <Pressable ref={ref} onPress={onPress} {...rest} style={styles.card}>
       <Image source={source} style={styles.image} />
-      <View style={styles.stars}>{renderStars(rating)}</View>
+      {/* ✅ 只有 showStars 為 true 才顯示星星 */}
+      {showStars && (
+        <View style={styles.stars}>{renderStars(rating)}</View>
+      )}
       <Text style={styles.title} numberOfLines={1}>{title}</Text>
       <Text style={styles.author} numberOfLines={1}>{author}</Text>
     </Pressable>

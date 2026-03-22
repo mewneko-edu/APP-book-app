@@ -1,16 +1,15 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+// ✅ 只需要 SafeAreaView，不需要 useSafeAreaInsets
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { allBooks } from '../index'; // ✅ 從 index 引入統一書籍資料
+import { allBooks } from '../index';
 
 export default function BookDetail() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const [bookmarked, setBookmarked] = useState(false);
-  const insets = useSafeAreaInsets();
 
-  // ✅ 根據 id 找到對應書籍
   const book = allBooks.find((b) => b.id === id);
 
   if (!book) {
@@ -25,22 +24,7 @@ export default function BookDetail() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={[styles.header, { paddingTop: insets.top }]}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.headerBtn}>
-          <Text style={styles.backArrow}>‹</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setBookmarked(!bookmarked)} style={styles.headerBtn}>
-          <Image
-            source={
-              bookmarked
-                ? require('../../icons/icon_bookmark_actived.png')
-                : require('../../icons/icon_bookmark.png')
-            }
-            style={styles.bookmarkIcon}
-          />
-        </TouchableOpacity>
-      </View>
-      {/* Header：返回 + 書籤 */}
+      {/* ✅ Header 不再手動加 paddingTop，SafeAreaView 已處理 */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.headerBtn}>
           <Text style={styles.backArrow}>‹</Text>
@@ -58,18 +42,13 @@ export default function BookDetail() {
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
-        {/* 書封 */}
         <View style={styles.imageContainer}>
           <Image source={source} style={styles.bookImage} />
         </View>
 
-        {/* 書名 */}
         <Text style={styles.title}>{book.title}</Text>
-
-        {/* 作者 */}
         <Text style={styles.author}>{book.author}</Text>
 
-        {/* 評分列 */}
         <View style={styles.ratingRow}>
           {renderStars(book.rating)}
           <Text style={styles.ratingText}>
@@ -77,10 +56,8 @@ export default function BookDetail() {
           </Text>
         </View>
 
-        {/* 簡介 */}
         <Text style={styles.description}>{book.description}</Text>
 
-        {/* 購買按鈕 */}
         <TouchableOpacity style={styles.buyBtn}>
           <Text style={styles.buyText}>BUY NOW FOR ${book.price.toFixed(2)}</Text>
         </TouchableOpacity>

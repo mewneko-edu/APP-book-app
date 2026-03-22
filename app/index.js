@@ -1,54 +1,74 @@
 import { Link } from 'expo-router';
-import { useState } from 'react';
-import { Image, Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useRef, useState } from 'react';
+import { Animated, Image, Modal, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import BookCard from './bookCard';
 
 export default function Home() {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const slideAnim = useRef(new Animated.Value(-300)).current; // ✅ 初始位置在畫面左側外
+
+  const openDrawer = () => {
+    setDrawerOpen(true);
+    Animated.timing(slideAnim, {
+      toValue: 0,          // 滑入到原位
+      duration: 250,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const closeDrawer = () => {
+    Animated.timing(slideAnim, {
+      toValue: -300,       // 滑回左側
+      duration: 200,
+      useNativeDriver: true,
+    }).start(() => setDrawerOpen(false)); // 動畫結束後才關閉 Modal
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-      {/* ✅ Drawer Modal */}
+      {/* ✅ Drawer Modal：animationType="none" 讓我們自己控制動畫 */}
       <Modal
         visible={drawerOpen}
         transparent
-        animationType="slide"
-        onRequestClose={() => setDrawerOpen(false)}
+        animationType="none"
+        onRequestClose={closeDrawer}
       >
-        <Pressable style={styles.drawerOverlay} onPress={() => setDrawerOpen(false)}>
-          <Pressable style={styles.drawer} onPress={() => {}}>
-            {/* 用戶頭像與名稱 */}
-            <Image
-              source={require('../image/img_avatar.png')}
-              style={styles.avatar}
-            />
-            <Text style={styles.drawerName}>May</Text>
-            <View style={styles.drawerDivider} />
-
-            {/* 選單項目 */}
-            {[
-              { label: 'Home', icon: require('../icons/icon_home.png') },
-              { label: 'Account', icon: require('../icons/icon_account.png') },
-              { label: 'Setting', icon: require('../icons/icon_settings.png') },
-            ].map((item) => (
-              <TouchableOpacity
-                key={item.label}
-                style={styles.drawerItem}
-                onPress={() => setDrawerOpen(false)}
-              >
-                <Image source={item.icon} style={styles.drawerIcon} />
-                <Text style={styles.drawerLabel}>{item.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </Pressable>
+        <Pressable style={styles.drawerOverlay} onPress={closeDrawer}>
+          {/* ✅ Animated.View 控制左右滑入 */}
+          <Animated.View
+            style={[styles.drawer, { transform: [{ translateX: slideAnim }] }]}
+          >
+            <Pressable onPress={() => {}} style={{ flex: 1 }}>
+              <Image
+                source={require('../image/img_avatar.png')}
+                style={styles.avatar}
+              />
+              <Text style={styles.drawerName}>May</Text>
+              <View style={styles.drawerDivider} />
+              {[
+                { label: 'Home', icon: require('../icons/icon_home.png') },
+                { label: 'Account', icon: require('../icons/icon_account.png') },
+                { label: 'Setting', icon: require('../icons/icon_settings.png') },
+              ].map((item) => (
+                <TouchableOpacity
+                  key={item.label}
+                  style={styles.drawerItem}
+                  onPress={closeDrawer}
+                >
+                  <Image source={item.icon} style={styles.drawerIcon} />
+                  <Text style={styles.drawerLabel}>{item.label}</Text>
+                </TouchableOpacity>
+              ))}
+            </Pressable>
+          </Animated.View>
         </Pressable>
       </Modal>
 
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
         {/* Header */}
         <View style={styles.header}>
-          {/* ✅ 漢堡選單點擊開啟 Drawer */}
-          <TouchableOpacity onPress={() => setDrawerOpen(true)}>
+          <TouchableOpacity onPress={openDrawer}>
             <Image source={require('../icons/icon_menu.png')} style={styles.icon} />
           </TouchableOpacity>
           <TouchableOpacity>
@@ -56,17 +76,17 @@ export default function Home() {
           </TouchableOpacity>
         </View>
 
-        {/* Popular Books */}
+        {/* Popular Books：showStars={false} 不顯示星星 */}
         <Text style={styles.sectionTitle}>Popular Books</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {popularBooks.map((book) => (
             <Link key={book.id} href={`/book/${book.id}`} asChild>
-              <BookCard {...book} />
+              <BookCard {...book} showStars={false} />
             </Link>
           ))}
         </ScrollView>
 
-        {/* Newest */}
+        {/* Newest：預設 showStars={true} 顯示星星 */}
         <Text style={styles.sectionTitle}>Newest</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 20 }}>
           {newestBooks.map((book) => (
@@ -103,7 +123,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Roboto',
     marginVertical: 10,
   },
-  // Drawer 樣式
   drawerOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.3)',
@@ -148,13 +167,12 @@ const styles = StyleSheet.create({
   },
 });
 
-// ✅ 書籍資料（加入 description 和 price 供 detail 頁使用）
 export const allBooks = [
   {
     id: '1',
     title: 'Fashionopolis',
     author: 'Dana Thomas',
-    rating: 1,
+    rating: 5,
     image: require('../image/img_book_fashinopolis.png'),
     description: 'An eye-opening investigation into the global fashion industry and its impact on our world.',
     price: 29.99,
@@ -163,7 +181,7 @@ export const allBooks = [
     id: '2',
     title: 'Chanel',
     author: 'Patrick Mauriès',
-    rating: 2,
+    rating: 4,
     image: require('../image/img_book_chanel.png'),
     description: 'A comprehensive look at the iconic Chanel brand and its enduring influence on fashion.',
     price: 39.99,
@@ -172,7 +190,7 @@ export const allBooks = [
     id: '3',
     title: 'Calligraphy',
     author: 'June & Lucy',
-    rating: 3,
+    rating: 4,
     image: require('../image/img_book_calligraphy.png'),
     description: 'A beautiful guide to the art of calligraphy for beginners and enthusiasts alike.',
     price: 24.99,
